@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Savings Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .savings-highlight {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen py-8 px-4">
+        <div class="max-w-4xl mx-auto">
+            <!-- Header -->
+            <div class="gradient-bg rounded-lg p-8 text-white mb-8">
+                <h1 class="text-4xl font-bold mb-4">Solar Savings Calculator</h1>
+                <p class="text-xl">Discover how much you could save by switching to solar energy</p>
+            </div>
+
+            <!-- Calculator Form -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-800">Calculate Your Savings</h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Monthly Bill Input -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Current Monthly Electricity Bill
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3 text-gray-500">$</span>
+                            <input type="number" id="monthlyBill" class="pl-8 w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="200" value="200">
+                        </div>
+                    </div>
+
+                    <!-- State Selection -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            State
+                        </label>
+                        <select id="state" class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            <option value="CA">California</option>
+                            <option value="TX">Texas</option>
+                            <option value="FL">Florida</option>
+                            <option value="NY">New York</option>
+                            <option value="AZ">Arizona</option>
+                            <option value="NV">Nevada</option>
+                            <option value="NC">North Carolina</option>
+                            <option value="NJ">New Jersey</option>
+                            <option value="MA">Massachusetts</option>
+                            <option value="MD">Maryland</option>
+                            <option value="DC">District of Columbia</option>
+                            <option value="DE">Delaware</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Roof Type -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Roof Type
+                        </label>
+                        <select id="roofType" class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            <option value="asphalt">Asphalt Shingle</option>
+                            <option value="metal">Metal</option>
+                            <option value="tile">Tile</option>
+                            <option value="flat">Flat</option>
+                        </select>
+                    </div>
+
+                    <!-- Sunlight Hours -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Average Daily Sunlight Hours
+                        </label>
+                        <select id="sunlight" class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            <option value="4">4-5 hours</option>
+                            <option value="5">5-6 hours</option>
+                            <option value="6" selected>6-7 hours</option>
+                            <option value="7">7-8 hours</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="calculateSavings()" class="mt-6 w-full gradient-bg text-white py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                    Calculate My Savings
+                </button>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results" class="hidden">
+                <!-- Summary Cards -->
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                        <div class="text-3xl mb-2">Monthly Savings</div>
+                        <div class="savings-highlight text-white text-4xl font-bold rounded-lg p-4" id="monthlySavings">$120</div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                        <div class="text-3xl mb-2">25-Year Total Savings</div>
+                        <div class="bg-green-500 text-white text-4xl font-bold rounded-lg p-4" id="totalSavings">$36,000</div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                        <div class="text-3xl mb-2">Payback Period</div>
+                        <div class="bg-blue-500 text-white text-4xl font-bold rounded-lg p-4" id="paybackPeriod">6.5 years</div>
+                    </div>
+                </div>
+
+                <!-- Detailed Breakdown -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-2xl font-semibold mb-6 text-gray-800">Financial Breakdown</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center py-3 border-b">
+                            <span class="text-gray-600">Current Monthly Bill</span>
+                            <span class="font-semibold" id="currentBillDisplay">$200</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3 border-b">
+                            <span class="text-gray-600">Estimated Solar Bill</span>
+                            <span class="font-semibold text-green-600" id="solarBillDisplay">$80</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3 border-b">
+                            <span class="text-gray-600">System Cost (Before Incentives)</span>
+                            <span class="font-semibold" id="systemCost">$25,000</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3 border-b">
+                            <span class="text-gray-600">Federal Tax Credit (30%)</span>
+                            <span class="font-semibold text-green-600" id="federalCredit">-$7,500</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3 border-b">
+                            <span class="text-gray-600">State/Local Incentives</span>
+                            <span class="font-semibold text-green-600" id="stateIncentives">-$2,000</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3 border-b">
+                            <span class="text-gray-600">Final System Cost</span>
+                            <span class="font-semibold text-xl" id="finalCost">$15,500</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Environmental Impact -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-2xl font-semibold mb-6 text-gray-800">Environmental Impact</h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">Trees Planted Equivalent</div>
+                            <div class="bg-green-100 text-green-800 text-3xl font-bold rounded-lg p-4" id="treesEquivalent">150</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">CO2 Reduction (Tons)</div>
+                            <div class="bg-blue-100 text-blue-800 text-3xl font-bold rounded-lg p-4" id="co2Reduction">85</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA Section -->
+                <div class="gradient-bg rounded-lg p-8 text-white text-center">
+                    <h3 class="text-3xl font-bold mb-4">Ready to Start Saving?</h3>
+                    <p class="text-xl mb-6">Schedule your free consultation and get a customized quote</p>
+                    <button class="bg-white text-purple-600 py-3 px-8 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                        Book Free Consultation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculateSavings() {
+            const monthlyBill = parseFloat(document.getElementById('monthlyBill').value) || 200;
+            const state = document.getElementById('state').value;
+            const roofType = document.getElementById('roofType').value;
+            const sunlightHours = parseInt(document.getElementById('sunlight').value);
+            
+            // Calculate system size based on bill
+            const annualBill = monthlyBill * 12;
+            const systemSize = Math.ceil(annualBill / 1500); // Rough estimate
+            const baseSystemCost = systemSize * 3500; // $3,500 per kW
+            
+            // Calculate savings percentage based on sunlight
+            const savingsPercentage = 0.5 + (sunlightHours - 4) * 0.1;
+            const monthlySavings = monthlyBill * savingsPercentage;
+            const solarBill = monthlyBill - monthlySavings;
+            
+            // Calculate incentives
+            const federalCredit = baseSystemCost * 0.3;
+            let stateIncentive = 0;
+            
+            // State-specific incentives (simplified)
+            switch(state) {
+                case 'CA': stateIncentive = baseSystemCost * 0.1; break;
+                case 'NY': stateIncentive = baseSystemCost * 0.08; break;
+                case 'MA': stateIncentive = baseSystemCost * 0.05; break;
+                case 'NJ': stateIncentive = baseSystemCost * 0.04; break;
+                default: stateIncentive = baseSystemCost * 0.02;
+            }
+            
+            const finalCost = baseSystemCost - federalCredit - stateIncentive;
+            const paybackPeriod = finalCost / (monthlySavings * 12);
+            const totalSavings = (monthlySavings * 12 * 25) - finalCost;
+            
+            // Environmental impact calculations
+            const treesEquivalent = Math.round(systemSize * 25);
+            const co2Reduction = Math.round(systemSize * 1.5 * 25);
+            
+            // Update display
+            document.getElementById('monthlySavings').textContent = `$${monthlySavings.toFixed(0)}`;
+            document.getElementById('totalSavings').textContent = `$${totalSavings.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+            document.getElementById('paybackPeriod').textContent = `${paybackPeriod.toFixed(1)} years`;
+            
+            document.getElementById('currentBillDisplay').textContent = `$${monthlyBill.toFixed(0)}`;
+            document.getElementById('solarBillDisplay').textContent = `$${solarBill.toFixed(0)}`;
+            document.getElementById('systemCost').textContent = `$${baseSystemCost.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+            document.getElementById('federalCredit').textContent = `-$${federalCredit.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+            document.getElementById('stateIncentives').textContent = `-$${stateIncentive.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+            document.getElementById('finalCost').textContent = `$${finalCost.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+            
+            document.getElementById('treesEquivalent').textContent = treesEquivalent;
+            document.getElementById('co2Reduction').textContent = co2Reduction;
+            
+            // Show results
+            document.getElementById('results').classList.remove('hidden');
+            
+            // Smooth scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Auto-calculate on page load
+        window.addEventListener('load', () => {
+            setTimeout(calculateSavings, 500);
+        });
+    </script>
+</body>
+</html>
